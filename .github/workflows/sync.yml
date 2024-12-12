@@ -1,0 +1,55 @@
+name: YouTube to Sheets Sync
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Run every hour
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  sync:
+    name: Sync YouTube Playlist to Google Sheets
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: production
+      LOG_LEVEL: INFO
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create environment file
+        run: |
+          cat << EOF > .env
+          YOUTUBE_PLAYLIST_ID=${{ secrets.YOUTUBE_PLAYLIST_ID }}
+          GOOGLE_SPREADSHEET_ID=${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          SHEET_NAME=${{ secrets.SHEET_NAME || 'YouTube Videos' }}
+          START_CELL=${{ secrets.START_CELL || 'A1' }}
+          MAX_RESULTS=${{ secrets.MAX_RESULTS || '50' }}
+          EOF
+
+      - name: Run sync
+        run: node src/index.js
+        env:
+          YOUTUBE_PLAYLIST_ID: ${{ secrets.YOUTUBE_PLAYLIST_ID }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          SHEET_NAME: ${{ secrets.SHEET_NAME }}
+          START_CELL: ${{ secrets.START_CELL }}
+          MAX_RESULTS: ${{ secrets.MAX_RESULTS }}
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: sync-logs
+          path: logs/
+          retention-days: 7
