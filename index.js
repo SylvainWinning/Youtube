@@ -1,6 +1,6 @@
-import { getPlaylistVideos } from './services/youtube/playlist.js';  
-import { sheets } from './services/sheets/sheets.js';              
-import { logger } from '../utils/logger.js';            
+import { getPlaylistVideos } from './services/youtube/playlist.js';
+import { sheets } from './services/sheets/sheets.js';
+import { logger } from '../utils/logger.js';  // Ligne ajoutée
 
 function escapeForFormula(text) {
   if (!text) return '';
@@ -28,7 +28,7 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options) {
     ];
   });
 
-  // En-têtes (RAW)
+  // Écriture des en-têtes (RAW)
   await sheets.spreadsheets.values.update({
     spreadsheetId,
     range: `'${sheetName}'!A1:C1`,
@@ -40,12 +40,12 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options) {
     }
   });
 
-  // Données (USER_ENTERED pour interpréter la formule)
+  // Insertion des données (USER_ENTERED pour interpréter les formules)
   const dataRange = `'${sheetName}'!A2:C`;
   const updateResponse = await sheets.spreadsheets.values.update({
     spreadsheetId,
     range: dataRange,
-    valueInputOption: 'USER_ENTERED', 
+    valueInputOption: 'USER_ENTERED',
     resource: { values: sheetValues }
   });
 
