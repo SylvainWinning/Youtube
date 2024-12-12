@@ -13,7 +13,7 @@ async function retryWithDelay(fn, retries = MAX_RETRIES, delay = RETRY_DELAY) {
     return await fn();
   } catch (error) {
     if (retries > 0 && !error.isAuthError) {
-      logger.warn(Retry attempt remaining: ${retries}. Retrying in ${delay/1000}s...);
+      logger.warn(`Retry attempt remaining: ${retries}. Retrying in ${delay/1000}s...`);
       await new Promise(resolve => setTimeout(resolve, delay));
       return retryWithDelay(fn, retries - 1, delay);
     }
