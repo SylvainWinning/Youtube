@@ -1,6 +1,6 @@
-import { getPlaylistVideos } from '../youtube/playlist.js';  // Adapte le chemin si nécessaire
-import { sheets } from '../sheets/sheets.js';               // Idem, adapte le chemin
-import { logger } from '../../utils/logger.js';             // Assure-toi que le chemin est correct
+import { getPlaylistVideos } from '../youtube/playlist.js';
+import { sheets } from '../sheets/sheets.js';
+import { logger } from '../../utils/logger.js';
 
 export async function syncPlaylistToSheets(playlistId, spreadsheetId, options) {
   const { sheetName = 'YouTube Videos', startCell = 'A1', maxResults = 50 } = options;
