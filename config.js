@@ -4,17 +4,17 @@ export const config = {
   oauth2ClientSecret: "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",
   redirectUri: "http://localhost:3000/oauth2callback",
   youtubeTokens: {
-    "access_token": "ya29.a0ARW5m74TLW6z0GAXyE1u0xQPzynlrr74LUJx9cOVFtBPauiu9bZ83eZxxiLy9ncCWMgWAVZ0nGelnmZaVdRmkIAKWvJKi6FwMU4g2kXOo6BngO2Zc_lhIO6jhYgmrdLI7Hy1RBxN4j2nVtXvKvvrqLC9O0zKbAxswlqfxVStaCgYKAZUSARESFQHGX2MipY1W8Voys1WkLhrgMt8XeA0175",
-    "scope": "https://www.googleapis.com/auth/youtube.readonly",
-    "token_type": "Bearer",
-    "expires_in": 3599,
-    "refresh_token": "1//04l9Lx9_w0G9WCgYIARAAGAQSNwF-L9IrOHzAH8unn1BshAOdVMY-CSWbeA-4MuR8webqSc3PK5_PGUkTxBBuUcNivJjEhziQAgY"
+    "access_token": "ya29.a0AeDClZDKscJQ1i3hMvYV7ekC7EuqRaEUTNJJx3pzhJR6iY4RY7NSYt4NuVvfPg9eQNBub60N03F6oCCtVyyzoqh32briNXmyy3O3P39fLqJzxWcXBKj32lKEDaY9EnhQd5ZoqUCneAUVwxJwhrZzRl6hTaTFyl9CUUl8wdhHaCgYKAV8SARESFQHGX2MiTXiHFnb8h4GtvpCvkGtn8A0175", 
+    "scope": "https://www.googleapis.com/auth/youtube.readonly", 
+    "token_type": "Bearer", 
+    "expires_in": 3599, 
+    "refresh_token": "1//04xz5aqAAf_0LCgYIARAAGAQSNwF-L9IrsAzT17HeHcYyXSHttYr5UM25MbeQMgEUDPqAdQ9yFkDlNV8Icn2znekM96VxOJ3kJSo"
   },
   sheetsTokens: {
-    "access_token": "ya29.a0AeDClZCelK0-R6zU2ds24pmPmKvPOcVCNHBTTxJEa-zo6DtBDisAaTiGPf7yXptablWR-5z98I5JJWdRnhy8eKx0tH95PyTu5ozC3OdAteM4BAtEUK_6ktgjiotUY4N6jygB4wK7MVkgWCNoSMvnsIT0yqT41pX_JAIMa3XiaCgYKAawSARESFQHGX2MiCmW6H09TB1A1BCIK8Va_nw0175",
-    "scope": "https://www.googleapis.com/auth/spreadsheets",
-    "token_type": "Bearer",
-    "expires_in": 3599,
-    "refresh_token": "1//04KbTYGbV9TR6CgYIARAAGAQSNwF-L9Ir76S-cRGaBxO7YJBBCxKhYrkAxtSMd4lynt45ObIlIDfwuJ-KZzdmH4g1uWNePRzhsWs"
+    "access_token": "ya29.a0ARW5m74LlveXZi3k0pMpdJ35WbGbSc2fp7Bgq9gGyFWnspYhNt7T9uj6J4fPCLiKhxk2miZ4P-4PphrZq-a-yFcSyhKdATqvNvXu6J8Jxt-G1MjoUNoh3jTZLbABviwKzeF6ONBiZoEY7G0aI_N9uVwUHXZJCDMAAWqtLPwsaCgYKAesSARESFQHGX2MiFHcUI4qkTFvN-oeFJzD97w0175", 
+    "scope": "https://www.googleapis.com/auth/spreadsheets", 
+    "token_type": "Bearer", 
+    "expires_in": 3599, 
+    "refresh_token": "1//04PNKcmppuEmTCgYIARAAGAQSNwF-L9IrP-V5Q3FcGuFYkHArE73KCLuqomFYUTyava0U7YRlewPsqSFkH5Su5TRWuwxd_GKt1f4"
   }
 }
