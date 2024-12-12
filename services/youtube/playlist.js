@@ -33,10 +33,10 @@ async function fetchPlaylistItems(playlistId) {
 }
 
 function mapPlaylistItemToVideo(item) {
-  // À ce stade, channel est celui de la playlistItem, pas forcément la chaîne d'origine.
+  // channel ici est celui du playlistItem, pas la chaîne d'origine de la vidéo.
   return {
     title: item.snippet.title,
-    channel: item.snippet.channelTitle, 
+    channel: item.snippet.channelTitle,
     videoId: item.contentDetails.videoId,
     publishedAt: item.snippet.publishedAt,
     description: item.snippet.description
@@ -49,12 +49,13 @@ async function enrichVideosWithDuration(videos) {
   const videoIds = videos.map(video => video.videoId);
   const durations = await getVideoDurations(videoIds);
 
-  // On récupère ici la vraie chaîne via 'channelTitle' retourné par fetchVideoDurationsChunk
+  // On réintègre channelTitle et channelId obtenus via fetchVideoDurationsChunk
   return videos.map(video => {
     const matched = durations.find(d => d.videoId === video.videoId);
     return {
       ...video,
-      channel: matched ? matched.channelTitle : video.channel, // Priorité à la chaîne provenant de videos.list
+      channel: matched ? matched.channelTitle : video.channel,
+      channelId: matched ? matched.channelId : null, // On ajoute ici channelId
       duration: matched ? matched.duration : 'N/A'
     };
   });
@@ -73,7 +74,6 @@ async function getVideoDurations(videoIds) {
 
 async function fetchVideoDurationsChunk(videoIds) {
   const response = await youtube.videos.list({
-    // Ajout de snippet pour récupérer la vraie chaîne de la vidéo
     part: 'snippet,contentDetails',
     id: videoIds.join(',')
   });
@@ -81,6 +81,7 @@ async function fetchVideoDurationsChunk(videoIds) {
   return response.data.items.map(item => ({
     videoId: item.id,
     duration: formatDuration(item.contentDetails.duration),
-    channelTitle: item.snippet.channelTitle // Chaîne originale de la vidéo
+    channelTitle: item.snippet.channelTitle, // Chaîne d'origine
+    channelId: item.snippet.channelId // On ajoute channelId ici
   }));
 }
