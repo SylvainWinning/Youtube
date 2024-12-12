@@ -33,10 +33,10 @@ async function fetchPlaylistItems(playlistId) {
 }
 
 function mapPlaylistItemToVideo(item) {
-  // item.snippet.channelTitle contient déjà le nom de la chaîne ayant publié la vidéo
+  // À ce stade, channel est celui de la playlistItem, pas forcément la chaîne d'origine.
   return {
     title: item.snippet.title,
-    channel: item.snippet.channelTitle, // Nom de la chaîne du posteur
+    channel: item.snippet.channelTitle, 
     videoId: item.contentDetails.videoId,
     publishedAt: item.snippet.publishedAt,
     description: item.snippet.description
@@ -48,11 +48,16 @@ async function enrichVideosWithDuration(videos) {
   
   const videoIds = videos.map(video => video.videoId);
   const durations = await getVideoDurations(videoIds);
-  
-  return videos.map(video => ({
-    ...video,
-    duration: durations.find(d => d.videoId === video.videoId)?.duration || 'N/A'
-  }));
+
+  // On récupère ici la vraie chaîne via 'channelTitle' retourné par fetchVideoDurationsChunk
+  return videos.map(video => {
+    const matched = durations.find(d => d.videoId === video.videoId);
+    return {
+      ...video,
+      channel: matched ? matched.channelTitle : video.channel, // Priorité à la chaîne provenant de videos.list
+      duration: matched ? matched.duration : 'N/A'
+    };
+  });
 }
 
 async function getVideoDurations(videoIds) {
@@ -68,12 +73,14 @@ async function getVideoDurations(videoIds) {
 
 async function fetchVideoDurationsChunk(videoIds) {
   const response = await youtube.videos.list({
-    part: 'contentDetails',
+    // Ajout de snippet pour récupérer la vraie chaîne de la vidéo
+    part: 'snippet,contentDetails',
     id: videoIds.join(',')
   });
 
   return response.data.items.map(item => ({
     videoId: item.id,
-    duration: formatDuration(item.contentDetails.duration)
+    duration: formatDuration(item.contentDetails.duration),
+    channelTitle: item.snippet.channelTitle // Chaîne originale de la vidéo
   }));
 }
