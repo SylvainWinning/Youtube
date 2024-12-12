@@ -17,19 +17,29 @@ export async function getPlaylistVideos(playlistId) {
 }
 
 async function fetchPlaylistItems(playlistId) {
-  const response = await youtube.playlistItems.list({
-    part: 'snippet,contentDetails',
-    playlistId: playlistId,
-    maxResults: MAX_VIDEOS_PER_REQUEST
-  });
+  let allItems = [];
+  let nextPageToken = null;
 
-  const items = response.data.items;
-  if (!items?.length) {
+  do {
+    const response = await youtube.playlistItems.list({
+      part: 'snippet,contentDetails',
+      playlistId: playlistId,
+      maxResults: MAX_VIDEOS_PER_REQUEST,
+      pageToken: nextPageToken || ''
+    });
+
+    const items = response.data.items || [];
+    allItems = allItems.concat(items);
+    nextPageToken = response.data.nextPageToken;
+
+  } while (nextPageToken);
+
+  if (!allItems.length) {
     logger.warn(`No videos found in playlist: ${playlistId}`);
     return [];
   }
 
-  return items.map(mapPlaylistItemToVideo);
+  return allItems.map(mapPlaylistItemToVideo);
 }
 
 function mapPlaylistItemToVideo(item) {
