@@ -22,8 +22,8 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options) {
     const safeChannel = escapeForFormula(video.channel);
 
      return [
-  `=LIEN_HYPERTEXTE("https://youtube.com/watch?v=${video.videoId}"; "${safeTitle}")`,
-  `=LIEN_HYPERTEXTE("https://www.youtube.com/channel/${video.channelId}"; "${safeChannel}")`,
+  `=LIEN_HYPERTEXTE("https://youtube.com/watch?v=${video.videoId}", "${safeTitle}")`,
+  `=LIEN_HYPERTEXTE("https://www.youtube.com/channel/${video.channelId}", "${safeChannel}")`,
   video.duration
 ];
   });
