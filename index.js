@@ -1,4 +1,4 @@
-import { getPlaylistVideos } from '../youtube/playlist.js';  
+import { getPlaylistVideos } from './services/youtube/playlist.js';  
 import { sheets } from '../sheets/sheets.js';              
 import { logger } from '../../utils/logger.js';            
 
