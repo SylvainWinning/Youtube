@@ -35,7 +35,7 @@ async function init() {
 
   try {
     const syncOptions = {
-      sheetName: process.env.SHEET_NAME || 'YouTube Videos',
+      sheetName: process.env.SHEET_NAME || "'YouTube Videos'",
       startCell: process.env.START_CELL || 'A1',
       maxResults: parseInt(process.env.MAX_RESULTS || '50', 10)
     };
