@@ -1,4 +1,4 @@
-import { getPlaylistVideos } from '../youtube/playlist.js';  // Adapte le chemin si différent
+import { getPlaylistVideos } from '../youtube/playlist.js';  // Adapte le chemin si nécessaire
 import { sheets } from '../sheets/sheets.js';               // Idem, adapte le chemin
 import { logger } from '../../utils/logger.js';             // Assure-toi que le chemin est correct
 
@@ -19,13 +19,25 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options) {
     video.duration
   ]);
 
-  // 3. Mise à jour de la Google Sheet
-  const range = `'${sheetName}'!${startCell}`;
+  // **NOUVELLE ÉTAPE : Écrire les en-têtes dans la première ligne**
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: `'${sheetName}'!A1:C1`,  // Ligne 1 pour les titres
+    valueInputOption: 'RAW',
+    resource: {
+      values: [
+        ['Titre', 'Chaîne', 'Durée']
+      ]
+    }
+  });
+
+  // 3. Mise à jour de la Google Sheet avec les données, à partir de la deuxième ligne
+  const dataRange = `'${sheetName}'!A2:C`; // On commence à A2 pour ne pas écraser les en-têtes
   const resource = { values: sheetValues };
 
   const updateResponse = await sheets.spreadsheets.values.update({
     spreadsheetId,
-    range,
+    range: dataRange,
     valueInputOption: 'RAW',
     resource
   });
