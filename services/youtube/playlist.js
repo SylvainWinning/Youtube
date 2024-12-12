@@ -33,9 +33,10 @@ async function fetchPlaylistItems(playlistId) {
 }
 
 function mapPlaylistItemToVideo(item) {
+  // item.snippet.channelTitle contient déjà le nom de la chaîne ayant publié la vidéo
   return {
     title: item.snippet.title,
-    channel: item.snippet.channelTitle,
+    channel: item.snippet.channelTitle, // Nom de la chaîne du posteur
     videoId: item.contentDetails.videoId,
     publishedAt: item.snippet.publishedAt,
     description: item.snippet.description
