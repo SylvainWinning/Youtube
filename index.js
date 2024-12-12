@@ -1,6 +1,6 @@
 import { getPlaylistVideos } from './services/youtube/playlist.js';
 import { sheets } from './services/sheets/sheets.js';
-import { logger } from '../utils/logger.js';  // Ligne ajoutée
+import { logger } from '../../utils/logger.js';
 
 function escapeForFormula(text) {
   if (!text) return '';
