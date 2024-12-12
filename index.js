@@ -1,5 +1,5 @@
 import { getPlaylistVideos } from './services/youtube/playlist.js';  
-import { sheets } from '../sheets/sheets.js';              
+import { sheets } from './services/sheets/sheets.js';              
 import { logger } from '../../utils/logger.js';            
 
 function escapeForFormula(text) {
