@@ -45,7 +45,7 @@ async function init() {
     );
 
     logger.info('Sync completed successfully!');
-    logger.info(Processed ${result.videosProcessed} videos);
+    logger.info(`Processed ${result.videosProcessed} videos`);
     logger.info(Updated ${result.updatedRows} rows and ${result.updatedColumns} columns);
     logger.info(Total cells updated: ${result.updatedCells});
     
