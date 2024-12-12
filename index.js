@@ -1,76 +1,118 @@
-import { config } from './config.js';
-import dotenv from 'dotenv';
-import { syncPlaylistToSheets } from './services/sync/index.js';
-import { logger } from './utils/logger.js';
+import { getPlaylistVideos } from '../youtube/playlist.js';  
+import { sheets } from '../sheets/sheets.js';              
+import { logger } from '../../utils/logger.js';            
 
-dotenv.config();
-
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 5000; // 5 seconds
-
-async function retryWithDelay(fn, retries = MAX_RETRIES, delay = RETRY_DELAY) {
-  try {
-    return await fn();
-  } catch (error) {
-    if (retries > 0 && !error.isAuthError) {
-      logger.warn(`Retry attempt remaining: ${retries}. Retrying in ${delay / 1000}s...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return retryWithDelay(fn, retries - 1, delay);
-    }
-    throw error;
-  }
+function escapeForFormula(text) {
+  if (!text) return '';
+  return text.replace(/"/g, '""');
 }
 
-async function init() {
-  const PLAYLIST_ID = process.env.YOUTUBE_PLAYLIST_ID;
-  const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
+export async function syncPlaylistToSheets(playlistId, spreadsheetId, options) {
+  const { sheetName = 'YouTube Videos', startCell = 'A1', maxResults = 50 } = options;
 
-  // Validate required environment variables
-  if (!PLAYLIST_ID || !SPREADSHEET_ID) {
-    logger.error('Missing required environment variables:');
-    if (!PLAYLIST_ID) logger.error('- YOUTUBE_PLAYLIST_ID');
-    if (!SPREADSHEET_ID) logger.error('- GOOGLE_SPREADSHEET_ID');
-    process.exit(1);
-  }
+  logger.info(`Syncing playlist ${playlistId} to sheet ${spreadsheetId}`);
 
-  try {
-    const syncOptions = {
-      sheetName: process.env.SHEET_NAME || "'YouTube Videos'",
-      startCell: process.env.START_CELL || 'A1',
-      maxResults: parseInt(process.env.MAX_RESULTS || '50', 10)
-    };
+  // 1. Récupération des vidéos
+  const videos = await getPlaylistVideos(playlistId, maxResults);
+  const videosProcessed = videos.length;
 
-    const result = await retryWithDelay(() => 
-      syncPlaylistToSheets(PLAYLIST_ID, SPREADSHEET_ID, syncOptions)
-    );
+  // 2. Préparation des données avec liens cliquables
+  const sheetValues = videos.map(video => {
+    const safeTitle = escapeForFormula(video.title);
+    const safeChannel = escapeForFormula(video.channel);
 
-    logger.info('Sync completed successfully!');
-    logger.info(`Processed ${result.videosProcessed} videos`);
-    logger.info(`Updated ${result.updatedRows} rows and ${result.updatedColumns} columns`);
-    logger.info(`Total cells updated: ${result.updatedCells}`);
-    
-    process.exit(0);
-  } catch (error) {
-    logger.error('Sync failed:', error.message);
-    
-    // Different exit codes for different types of errors
-    if (error.isAuthError) {
-      process.exit(2); // Authentication errors
-    } else {
-      process.exit(1); // Other errors
+    return [
+      `=HYPERLINK("https://youtube.com/watch?v=${video.videoId}", "${safeTitle}")`,
+      `=HYPERLINK("https://www.youtube.com/channel/${video.channelId}", "${safeChannel}")`,
+      video.duration
+    ];
+  });
+
+  // En-têtes (RAW)
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: `'${sheetName}'!A1:C1`,
+    valueInputOption: 'RAW',
+    resource: {
+      values: [
+        ['Titre', 'Chaîne', 'Durée']
+      ]
     }
-  }
+  });
+
+  // Données (USER_ENTERED pour interpréter la formule)
+  const dataRange = `'${sheetName}'!A2:C`;
+  const updateResponse = await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: dataRange,
+    valueInputOption: 'USER_ENTERED', 
+    resource: { values: sheetValues }
+  });
+
+  const updatedCells = updateResponse.data.updatedCells || 0;
+  const updatedRows = sheetValues.length;
+  const updatedColumns = updatedRows > 0 ? sheetValues[0].length : 0;
+
+  logger.info(`Processed ${videosProcessed} videos`);
+  logger.info(`Updated ${updatedRows} rows and ${updatedColumns} columns`);
+  logger.info(`Total cells updated: ${updatedCells}`);
+
+  // Application des bordures
+  const totalRows = updatedRows + 1;
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: spreadsheetId,
+    resource: {
+      requests: [
+        {
+          updateBorders: {
+            range: {
+              sheetId: 0,
+              startRowIndex: 0,
+              endRowIndex: totalRows,
+              startColumnIndex: 0,
+              endColumnIndex: 3
+            },
+            top: {
+              style: "SOLID",
+              width: 1,
+              color: { red: 0, green: 0, blue: 0 }
+            },
+            bottom: {
+              style: "SOLID",
+              width: 1,
+              color: { red: 0, green: 0, blue: 0 }
+            },
+            left: {
+              style: "SOLID",
+              width: 1,
+              color: { red: 0, green: 0, blue: 0 }
+            },
+            right: {
+              style: "SOLID",
+              width: 1,
+              color: { red: 0, green: 0, blue: 0 }
+            },
+            innerHorizontal: {
+              style: "SOLID",
+              width: 1,
+              color: { red: 0, green: 0, blue: 0 }
+            },
+            innerVertical: {
+              style: "SOLID",
+              width: 1,
+              color: { red: 0, green: 0, blue: 0 }
+            }
+          }
+        }
+      ]
+    }
+  });
+
+  return {
+    videosProcessed,
+    updatedRows,
+    updatedColumns,
+    updatedCells
+  };
 }
-
-// Handle uncaught errors
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught Exception:', error);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
-});
-
-init();
