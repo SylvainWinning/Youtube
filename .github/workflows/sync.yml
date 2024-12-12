@@ -38,7 +38,7 @@ jobs:
           EOF
 
       - name: Run sync
-        run: node src/index.js
+        run: node index.js
         env:
           YOUTUBE_PLAYLIST_ID: ${{ secrets.YOUTUBE_PLAYLIST_ID }}
           GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
