@@ -20,7 +20,7 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options) {
   ]);
 
   // 3. Mise à jour de la Google Sheet
-  const range = `${sheetName}!${startCell}`;
+  const range = `'${sheetName}'!${startCell}`;
   const resource = { values: sheetValues };
 
   const updateResponse = await sheets.spreadsheets.values.update({
