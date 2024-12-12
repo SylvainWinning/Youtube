@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import { config } from '../config.js';
+import { config } from '../../config.js';
 import { logger } from '../utils/logger.js';
 
 class OAuth2ClientManager {
