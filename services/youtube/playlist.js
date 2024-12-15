@@ -23,15 +23,14 @@ async function fetchPlaylistItems(playlistId) {
   do {
     const response = await youtube.playlistItems.list({
       part: 'snippet,contentDetails',
-      playlistId: playlistId,
+      playlistId,
       maxResults: MAX_VIDEOS_PER_REQUEST,
-      pageToken: nextPageToken || ''
+      pageToken: nextPageToken || '',
     });
 
     const items = response.data.items || [];
     allItems = allItems.concat(items);
     nextPageToken = response.data.nextPageToken;
-
   } while (nextPageToken);
 
   if (!allItems.length) {
@@ -43,30 +42,28 @@ async function fetchPlaylistItems(playlistId) {
 }
 
 function mapPlaylistItemToVideo(item) {
-  // channel ici est celui du playlistItem, pas la chaîne d'origine de la vidéo.
   return {
     title: item.snippet.title,
-    channel: item.snippet.channelTitle,
+    channel: item.snippet.channelTitle, // Playlist owner's channel
     videoId: item.contentDetails.videoId,
     publishedAt: item.snippet.publishedAt,
-    description: item.snippet.description
+    description: item.snippet.description,
   };
 }
 
 async function enrichVideosWithDuration(videos) {
   if (!videos.length) return videos;
-  
-  const videoIds = videos.map(video => video.videoId);
+
+  const videoIds = videos.map((video) => video.videoId);
   const durations = await getVideoDurations(videoIds);
 
-  // On réintègre channelTitle et channelId obtenus via fetchVideoDurationsChunk
-  return videos.map(video => {
-    const matched = durations.find(d => d.videoId === video.videoId);
+  return videos.map((video) => {
+    const matched = durations.find((d) => d.videoId === video.videoId);
     return {
       ...video,
       channel: matched ? matched.channelTitle : video.channel,
-      channelId: matched ? matched.channelId : null, // On ajoute ici channelId
-      duration: matched ? matched.duration : 'N/A'
+      channelId: matched ? matched.channelId : null,
+      duration: matched ? matched.duration : 'N/A',
     };
   });
 }
@@ -85,13 +82,13 @@ async function getVideoDurations(videoIds) {
 async function fetchVideoDurationsChunk(videoIds) {
   const response = await youtube.videos.list({
     part: 'snippet,contentDetails',
-    id: videoIds.join(',')
+    id: videoIds.join(','),
   });
 
-  return response.data.items.map(item => ({
+  return response.data.items.map((item) => ({
     videoId: item.id,
     duration: formatDuration(item.contentDetails.duration),
-    channelTitle: item.snippet.channelTitle, // Chaîne d'origine
-    channelId: item.snippet.channelId // On ajoute channelId ici
+    channelTitle: item.snippet.channelTitle,
+    channelId: item.snippet.channelId,
   }));
 }
