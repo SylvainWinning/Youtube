@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import { sheetsAuth } from './oauth2Client.js';
+import { sheetsAuth } from '../auth/oauth2Client.js';
 import { logger } from '../../utils/logger.js';
 
 const sheets = google.sheets({ version: 'v4', auth: sheetsAuth });
