@@ -1,4 +1,4 @@
-import { sheets } from '../../sheets/sheets.js';
+import { sheets } from '../sheets/sheets.js';
 import { logger } from '../../../utils/logger.js';
 
 async function testWriteToSheets() {
