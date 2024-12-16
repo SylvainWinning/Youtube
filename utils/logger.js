@@ -1,8 +1,10 @@
+import { config } from '../config.js';
+
 const logLevels = {
   ERROR: 0,
   WARN: 1,
   INFO: 2,
-  DEBUG: 3
+  DEBUG: 3,
 };
 
 class Logger {
@@ -35,4 +37,5 @@ class Logger {
   }
 }
 
-export const logger = new Logger(process.env.LOG_LEVEL || 'INFO');
+// Initialisation du logger avec le niveau de log défini dans config.js
+export const logger = new Logger(config.app.logLevel);
