@@ -10,42 +10,42 @@ jobs:
     name: Sync YouTube Playlist to Google Sheets
     runs-on: ubuntu-latest
 
-    env:
-      NODE_ENV: production
-      LOG_LEVEL: INFO
-
     steps:
+      # Étape 1 : Récupération du dépôt
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Étape 2 : Configuration de Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
 
+      # Étape 3 : Installation des dépendances
       - name: Install dependencies
         run: npm install
 
+      # Étape 4 : Création du fichier .env
       - name: Create environment file
         run: |
-          cat << EOF > .env
-          YOUTUBE_PLAYLIST_ID=${{ secrets.YOUTUBE_PLAYLIST_ID }}
-          GOOGLE_SPREADSHEET_ID=${{ secrets.GOOGLE_SPREADSHEET_ID }}
-          SHEET_NAME=${{ secrets.SHEET_NAME || 'YouTube Videos' }}
-          START_CELL=${{ secrets.START_CELL || 'A1' }}
-          MAX_RESULTS=${{ secrets.MAX_RESULTS || '50' }}
-          EOF
+          echo "LOG_LEVEL=DEBUG" > .env
+          echo "YOUTUBE_PLAYLIST_ID=${{ secrets.YOUTUBE_PLAYLIST_ID }}" >> .env
+          echo "GOOGLE_SPREADSHEET_ID=${{ secrets.GOOGLE_SPREADSHEET_ID }}" >> .env
+          echo "SHEET_NAME=${{ secrets.SHEET_NAME || 'YouTube Videos' }}" >> .env
+          echo "START_CELL=${{ secrets.START_CELL || 'A1' }}" >> .env
+          echo "MAX_RESULTS=${{ secrets.MAX_RESULTS || '50' }}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
+          echo "GOOGLE_REFRESH_TOKEN=${{ secrets.GOOGLE_REFRESH_TOKEN }}" >> .env
+          echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
 
+      # Étape 5 : Exécution de la synchronisation
       - name: Run sync
-        run: node index.js
-        env:
-          YOUTUBE_PLAYLIST_ID: ${{ secrets.YOUTUBE_PLAYLIST_ID }}
-          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
-          SHEET_NAME: ${{ secrets.SHEET_NAME }}
-          START_CELL: ${{ secrets.START_CELL }}
-          MAX_RESULTS: ${{ secrets.MAX_RESULTS }}
+        run: node src/index.js
 
+      # Étape 6 : Téléchargement des logs en cas d'échec
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v3
