@@ -8,25 +8,24 @@ export const config = {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     redirectUri: process.env.GOOGLE_REDIRECT_URI,
-    refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
   },
   youtube: {
     apiKey: process.env.YOUTUBE_API_KEY,
     tokens: {
-      accessToken: process.env.YOUTUBE_ACCESS_TOKEN, // Facultatif si besoin
-      refreshToken: process.env.YOUTUBE_REFRESH_TOKEN, // Facultatif si besoin
+      accessToken: process.env.YOUTUBE_ACCESS_TOKEN,
+      refreshToken: process.env.YOUTUBE_REFRESH_TOKEN,
       scope: 'https://www.googleapis.com/auth/youtube.readonly',
-      tokenType: 'Bearer', // Gardez ceci par défaut
-      expiresIn: process.env.YOUTUBE_TOKEN_EXPIRES_IN || 3599, // Facultatif
+      tokenType: 'Bearer',
+      expiresIn: parseInt(process.env.YOUTUBE_TOKEN_EXPIRES_IN, 10) || 3599,
     },
   },
   sheets: {
     tokens: {
-      accessToken: process.env.SHEETS_ACCESS_TOKEN, // Facultatif si besoin
-      refreshToken: process.env.SHEETS_REFRESH_TOKEN, // Facultatif si besoin
+      accessToken: process.env.SHEETS_ACCESS_TOKEN,
+      refreshToken: process.env.SHEETS_REFRESH_TOKEN,
       scope: 'https://www.googleapis.com/auth/spreadsheets',
-      tokenType: 'Bearer', // Gardez ceci par défaut
-      expiresIn: process.env.SHEETS_TOKEN_EXPIRES_IN || 3599, // Facultatif
+      tokenType: 'Bearer',
+      expiresIn: parseInt(process.env.SHEETS_TOKEN_EXPIRES_IN, 10) || 3599,
     },
   },
   app: {
