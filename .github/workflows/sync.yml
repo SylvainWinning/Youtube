@@ -8,7 +8,7 @@ on:
 jobs:
   sync:
     name: Sync YouTube Playlist to Google Sheets
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       # Étape 1 : Récupération du dépôt
