@@ -15,6 +15,8 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options = 
 
     // 1. Fetch playlist videos
     const videos = await getPlaylistVideos(playlistId, maxResults);
+    logger.debug('Fetched videos:', videos);
+
     const videosProcessed = videos.length;
 
     if (videosProcessed === 0) {
@@ -34,8 +36,11 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options = 
       ];
     });
 
+    logger.debug('Prepared sheet values:', sheetValues);
+
     // 3. Write headers
-    await sheets.spreadsheets.values.update({
+    logger.debug('Writing headers to the sheet...');
+    const headerResponse = await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: `'${sheetName}'!A1:C1`,
       valueInputOption: 'RAW',
@@ -43,15 +48,18 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options = 
         values: [['Title', 'Channel', 'Duration']],
       },
     });
+    logger.debug('Header update response:', headerResponse.data);
 
     // 4. Write video data
     const dataRange = `'${sheetName}'!A2:C`;
+    logger.debug(`Writing video data to range: ${dataRange}`);
     const updateResponse = await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: dataRange,
       valueInputOption: 'USER_ENTERED',
       resource: { values: sheetValues },
     });
+    logger.debug('Data update response:', updateResponse.data);
 
     const updatedCells = updateResponse.data.updatedCells || 0;
     const updatedRows = sheetValues.length;
@@ -63,7 +71,8 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options = 
 
     // 5. Apply borders
     const totalRows = updatedRows + 1; // Include header row
-    await sheets.spreadsheets.batchUpdate({
+    logger.debug('Applying borders to the sheet...');
+    const borderResponse = await sheets.spreadsheets.batchUpdate({
       spreadsheetId,
       resource: {
         requests: [
@@ -87,6 +96,7 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options = 
         ],
       },
     });
+    logger.debug('Border update response:', borderResponse.data);
 
     logger.info('Borders applied successfully.');
 
