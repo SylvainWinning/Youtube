@@ -40,9 +40,11 @@ jobs:
           echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
           echo "GOOGLE_REFRESH_TOKEN=${{ secrets.GOOGLE_REFRESH_TOKEN }}" >> .env
           echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
+          echo "SHEETS_ACCESS_TOKEN=${{ secrets.SHEETS_ACCESS_TOKEN }}" >> .env
+          echo "YOUTUBE_ACCESS_TOKEN=${{ secrets.YOUTUBE_ACCESS_TOKEN }}" >> .env
 
-      # Étape 5 : Exécution de la synchronisation
-      - name: Run sync
+      # Étape 5 : Test d'écriture dans Google Sheets
+      - name: Run test write to Google Sheets
         run: node services/sync/index.js
 
       # Étape 6 : Téléchargement des logs en cas d'échec
