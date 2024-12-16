@@ -1,5 +1,5 @@
 import { sheets } from '../sheets/sheets.js';
-import { logger } from '../utils/logger.js';
+import { logger } from '../../utils/logger.js';
 
 async function testWriteToSheets() {
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID; // ID de la feuille Google Sheets
