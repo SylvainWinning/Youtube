@@ -30,6 +30,10 @@ async function testWriteToSheets() {
       },
     });
 
+    // Log détaillé de la réponse API Google Sheets
+    logger.debug('Google Sheets API response:', response.data);
+    console.log('Google Sheets API response:', JSON.stringify(response.data, null, 2));
+
     logger.info(`Test data written successfully. Updated ${response.data.updatedCells} cells.`);
   } catch (error) {
     logger.error('Error during test write:', error.message);
