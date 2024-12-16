@@ -19,7 +19,7 @@ class OAuth2ClientManager {
 
     oauth2Client.on('tokens', (tokens) => {
       logger.info(`Tokens refreshed for ${service}`);
-      // Sauvegardez les nouveaux tokens si nécessaire
+      // Sauvegarde potentielle des nouveaux tokens (à implémenter si nécessaire)
       logger.debug('New tokens received:', tokens);
     });
 
@@ -43,7 +43,7 @@ const oauth2Manager = new OAuth2ClientManager(
   config.google.redirectUri
 );
 
-// Création des clients pour YouTube et Google Sheets
+// Création des clients OAuth2 pour YouTube et Google Sheets
 const youtubeAuth = oauth2Manager.createClient('youtube', {
   refresh_token: config.google.refreshToken,
 });
