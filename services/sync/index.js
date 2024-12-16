@@ -100,6 +100,13 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options = 
 
     logger.info('Borders applied successfully.');
 
+    // 6. Verify if updates were successful
+    if (updatedCells === 0) {
+      logger.warn('No cells were updated. Verify data and permissions.');
+    } else {
+      logger.info('Sheet updated successfully!');
+    }
+
     return {
       videosProcessed,
       updatedRows,
@@ -107,7 +114,10 @@ export async function syncPlaylistToSheets(playlistId, spreadsheetId, options = 
       updatedCells,
     };
   } catch (error) {
-    logger.error('Error during sync process:', error);
+    if (error.response?.data) {
+      logger.error('Error response from API:', error.response.data);
+    }
+    logger.error('Error during sync process:', error.message || error);
     throw error;
   }
 }
