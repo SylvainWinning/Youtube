@@ -15,6 +15,10 @@ async function testWriteToSheets() {
       ['Test Video 2', 'Test Channel 2', '10m15s'],
     ];
 
+    // Debug : Affichage des données préparées pour Google Sheets
+    logger.debug('Data being sent to Google Sheets:', testValues);
+    console.log('Prepared sheet values:', testValues); // Pour affichage brut dans la console
+
     // Écriture des données dans la feuille
     const range = `'${sheetName}'!A1:C3`; // Écriture des données dans les cellules A1 à C3
     const response = await sheets.spreadsheets.values.update({
