@@ -43,7 +43,7 @@ jobs:
 
       # Étape 5 : Exécution de la synchronisation
       - name: Run sync
-  run: node services/sync/index.js
+        run: node services/sync/index.js
 
       # Étape 6 : Téléchargement des logs en cas d'échec
       - name: Upload logs on failure
