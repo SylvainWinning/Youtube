@@ -2,7 +2,10 @@ import { google } from 'googleapis';
 import { sheetsAuth } from '../auth/oauth2Client.js';
 import { logger } from '../../utils/logger.js';
 
+// Initialisation de l'objet Sheets API
 const sheets = google.sheets({ version: 'v4', auth: sheetsAuth });
+
+export { sheets };
 
 export async function writeToSheet(spreadsheetId, sheetName, data) {
   try {
